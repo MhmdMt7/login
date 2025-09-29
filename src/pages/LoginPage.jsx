@@ -15,9 +15,9 @@ export default function LoginPage() {
     password: Yup.string().required("Password is required"),
   });
 
-  const handleSubmit = (values) => {
-    let domain = "http://82.112.241.233:1993";
-    let endPoint = "/api/auth/local";
+ const handleSubmit = (values) => {
+    let domain = 'http://82.112.241.233:1993';
+    let endPoint = '/api/auth/local';
     let url = domain + endPoint;
     let data = {
       identifier: values.email,
@@ -26,14 +26,15 @@ export default function LoginPage() {
     axios
       .post(url, data)
       .then((res) => {
-        toast.success("Success Login");
-        sessionStorage.setItem("jwt", res.data.jwt);
-        navigate("/");
+        toast.success('Success Login');
+        sessionStorage.setItem('jwt', res.data.jwt);
+        navigate('/');
       })
       .catch((err) => {
-        toast.error(err.response?.data?.error?.message || "Login failed");
+        toast.error(err.response.data.error.message);
       });
   };
+
 
   return (
     <section className="flex w-full h-screen bg-[#111418]">
