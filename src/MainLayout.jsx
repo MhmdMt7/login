@@ -1,29 +1,37 @@
-import { useEffect } from 'react';
-import SideMenu from './components/SideMenu';
-import { Outlet, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useEffect } from "react";
+import SideMenu from "./components/SideMenu";
+import { Outlet, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { userInfo } from "./store";
+
 
 export default function MainLayout() {
+  //Scope MainLayout
+  const { setUserInfo } = userInfo();
+
   const navigate = useNavigate();
   useEffect(() => {
-    let jwt = sessionStorage.getItem('jwt');
+    let jwt = sessionStorage.getItem("jwt");
     if (!jwt) {
-      navigate('/login');
+      navigate("/login");
     } else {
       // Confirm jwt (from backend)
-      let domain = 'http://82.112.241.233:1993';
-      let endPoint = '/api/users/me';
+      let domain = "http://82.112.241.233:1993";
+      let endPoint = "/api/users/me";
       let url = domain + endPoint;
+
       axios
         .get(url, {
           headers: { Authorization: `Bearer ${jwt}` },
         })
         .then((res) => {
+          setUserInfo(res.data);
           console.log(res);
         })
         .catch((err) => {
           sessionStorage.clear();
-          navigate('/login');
+          navigate("/login");
+          console.log(err);
         });
     }
   }, []);

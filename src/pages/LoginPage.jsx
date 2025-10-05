@@ -1,13 +1,14 @@
-
 import axios from "axios";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import toast from "react-hot-toast";
 import { useNavigate, Link } from "react-router-dom";
 import * as Yup from "yup";
 import car from "../assets/car.jpg"; //
-import logo from "../assets/logo.png"; // 
+import logo from "../assets/logo.png"; //
+import { loader } from "../store";
 
 export default function LoginPage() {
+  const {  openLoader, closeLoader } = loader();
   const navigate = useNavigate();
 
   const validationSchema = Yup.object({
@@ -15,26 +16,31 @@ export default function LoginPage() {
     password: Yup.string().required("Password is required"),
   });
 
- const handleSubmit = (values) => {
-    let domain = 'http://82.112.241.233:1993';
-    let endPoint = '/api/auth/local';
+  const handleSubmit = (values) => {
+    let domain = "http://82.112.241.233:1993";
+    let endPoint = "/api/auth/local";
     let url = domain + endPoint;
     let data = {
       identifier: values.email,
       password: values.password,
     };
+
+    openLoader();
+
     axios
       .post(url, data)
       .then((res) => {
-        toast.success('Success Login');
-        sessionStorage.setItem('jwt', res.data.jwt);
-        navigate('/');
+        sessionStorage.setItem("jwt", res.data.jwt);
+        setTimeout(() => {
+          toast.success("Success Login");
+          closeLoader();
+          navigate("/");
+        }, 2000);
       })
       .catch((err) => {
         toast.error(err.response.data.error.message);
       });
   };
-
 
   return (
     <section className="flex w-full h-screen bg-[#111418]">
@@ -161,4 +167,3 @@ export default function LoginPage() {
     </section>
   );
 }
-
